@@ -1,0 +1,424 @@
+<?php // BWU Restaurant - ENGLISH - FULL - Cash on Table Fix ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BWU Restaurant & Food Ordering</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+html{scroll-behavior:smooth}body{background:#DBEAFE;padding-bottom:55px;overflow-y:auto;overflow-x:hidden}
+header{background:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200') center/cover no-repeat;color:#fff;padding:32px 10px 18px;display:flex;flex-direction:column;gap:8px;position:relative;z-index:500;min-height:200px}
+.header-row{display:flex;align-items:flex-start;justify-content:space-between;width:100%;gap:8px;padding-top:10px}
+.heading-wrap{flex:1;text-align:center;min-width:0;padding-top:4px}
+.main-heading{font-size:40px;line-height:1.1;color:#FF0000;text-shadow:0 3px 10px rgba(255,255,255,.95);font-weight:900;text-align:center;word-break:break-word}
+.header-icons{display:flex;flex-direction:column;gap:8px;align-items:center;flex-shrink:0}
+@media(max-width:600px){header{min-height:175px;padding:28px 8px 14px}.main-heading{font-size:28px}}
+.top{padding:12px 14px 6px;display:flex;align-items:center;justify-content:space-between}
+.top h2{font-size:22px;color:#111}.top p{font-size:13px;color:#555}
+.canteen-badge{background:#dcfce7;color:#166534;border:1px solid #86efac;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:bold}
+.canteen-badge.closed{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.search{width:calc(100% - 28px);margin:4px 14px;display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #eee;border-radius:10px;padding:0 10px;height:42px;position:relative;z-index:10}
+.search input{border:none;outline:none;flex:1;font-size:13px;height:34px;min-width:0}
+.ai-icon{font-size:18px;cursor:pointer;background:#111827;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.search-results{width:calc(100% - 28px);margin:0 14px;background:#fff;border-radius:0 0 12px 12px;box-shadow:0 5px 15px rgba(0,0,0,.15);overflow:hidden;position:relative;z-index:9;display:none}
+.search-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid #eee}
+.search-item img{width:50px;height:50px;border-radius:8px;object-fit:cover}
+.search-item b{font-size:13px}.search-item small{color:#666;font-size:11px}
+.search-item button{margin-left:auto;background:#15803d;color:#fff;border:none;padding:6px 12px;border-radius:8px;font-weight:bold;cursor:pointer}
+.order-type{display:flex;gap:10px;margin:10px 14px}.order-type button{flex:1;padding:14px;border:2px solid #ddd;background:#fff;border-radius:12px;font-weight:bold;font-size:15px;cursor:pointer;min-width:0}
+.order-type button.active{background:#ea580c;color:#fff;border-color:#ea580c}
+.table-box{margin:12px 14px;background:#fff;border-radius:14px;padding:12px 10px;box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden;max-width:calc(100% - 28px);width:calc(100% - 28px)}
+.table-box h3{font-size:15px;margin-bottom:8px}
+.tables{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;width:100%;max-width:100%}
+.tables button:nth-child(1){background:#FF6B35;color:white}.tables button:nth-child(2){background:#FFC300;color:black}.tables button:nth-child(3){background:#2ECC71;color:white}.tables button:nth-child(4){background:#3498DB;color:white}.tables button:nth-child(5){background:#9B59B6;color:white}.tables button:nth-child(6){background:#E91E63;color:white}.tables button:nth-child(7){background:#00BCD4;color:white}.tables button:nth-child(8){background:#FF9800;color:white}.tables button:nth-child(9){background:#795548;color:white}.tables button:nth-child(10){background:#607D8B;color:white}
+.tbtn{padding:8px 2px;border:3px solid transparent;background:#f9fafb;border-radius:10px;font-weight:bold;cursor:pointer;font-size:11px;line-height:1.3;min-width:0;width:100%;word-break:break-word;white-space:normal;overflow:hidden}
+.tbtn span{font-size:9px !important;line-height:1.2;display:block;word-break:break-word}
+.tables button.tbtn.sel{background:#ea580c !important;color:#fff !important;border-color:#111827 !important;box-shadow:0 0 0 2px #ea580c,0 4px 10px rgba(234,88,12,.5)}
+@media(max-width:400px){.tables{gap:5px}.tbtn{font-size:10px;padding:7px 1px}.table-box{padding:10px 8px}}
+.sel-table-show{background:#fff7ed;border:2px solid #ea580c;border-radius:10px;padding:10px;text-align:center;font-weight:bold;color:#ea580c;margin-top:10px;display:none}
+.chair-box{background:#fff7ed;border:2px solid #ea580c;border-radius:10px;padding:12px;margin-top:12px;text-align:center;display:none}
+.chair-btn{padding:10px 14px;border:2px solid #ddd;background:#fff;border-radius:10px;font-weight:bold;cursor:pointer;font-size:14px}
+.chair-btn.active{background:#ea580c !important;color:#fff !important;border-color:#ea580c}
+.chair-btn:disabled{opacity:.3;cursor:not-allowed}
+.loc-box-small{background:#eff6ff;border:1px solid #93c5fd;border-radius:10px;padding:8px;margin:8px 0}
+.loc-btn-small{background:#2563eb;color:#fff;border:none;width:100%;padding:10px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;margin-top:5px}
+.loc-btn-small:disabled{background:#93c5fd}
+.km-show-small{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:7px;margin-top:6px;text-align:center;display:none;font-size:13px}
+.veg-nonveg{display:flex;gap:10px;margin:10px 14px}.veg-nonveg button{flex:1;padding:12px;border:2px solid #ddd;background:#fff;border-radius:10px;font-weight:bold;cursor:pointer;min-width:0}
+.veg-nonveg button.active.veg{background:#16a34a;color:#fff;border-color:#16a34a}.veg-nonveg button.active.nonveg{background:#dc2626;color:#fff;border-color:#dc2626}.veg-nonveg button.active.all{background:#111827;color:#fff}
+.cats{display:flex;gap:14px;overflow-x:auto;padding:10px 14px;white-space:nowrap;scrollbar-width:none}.cats::-webkit-scrollbar{display:none}
+.cat{text-align:center;min-width:62px;cursor:pointer;flex-shrink:0}.cat img{width:62px;height:62px;border-radius:50%;object-fit:cover;border:2px solid #eee}
+.cat.active img{border-color:#ea580c}.cat p{font-size:13px;margin-top:4px}.cat.active p{color:#ea580c;font-weight:bold}
+.filters{display:flex;gap:8px;overflow-x:auto;padding:6px 14px;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}
+.filters button{white-space:nowrap;padding:8px 14px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:13px}.filters button.active{background:#111827;color:#fff}
+.sec{padding:14px}.sec h3{font-size:13px;letter-spacing:2px;color:#666;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08);position:relative;min-width:0}
+.card img{width:100%;height:130px;object-fit:cover}.card-body{padding:8px}
+.offer{position:absolute;top:8px;left:0;background:#2563eb;color:#fff;font-size:11px;font-weight:bold;padding:4px 8px;border-radius:0 6px 6px 0}
+.veg-badge{position:absolute;top:8px;right:8px;background:#fff;padding:3px 7px;border-radius:6px;font-size:11px;font-weight:bold}
+.rating{background:#15803d;color:#fff;font-size:11px;padding:2px 6px;border-radius:6px;display:inline-block}
+.price{color:#ea580c;font-weight:bold}.addbtn{background:#fff;color:#15803d;border:1px solid #15803d;padding:6px 14px;border-radius:8px;font-weight:bold;float:right;cursor:pointer}
+.qty-btn{width:28px;height:28px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:16px;border:1px solid #ddd;display:inline-flex;align-items:center;justify-content:center}
+.qty-minus{background:#fee2e2;border-color:#fca5a5}.qty-plus{background:#dcfce7;border-color:#86efac}
+.qty-wrap{display:flex;align-items:center;gap:6px;float:right}
+.bill-table{width:100%;border-collapse:collapse;font-size:13px}.bill-table th{background:#111827;color:#fff;padding:8px;text-align:left}.bill-table td{padding:8px;border-bottom:1px solid #eee}
+.cartbar{position:fixed;bottom:42px;left:14px;right:14px;background:#15803d;color:#fff;padding:8px;border-radius:10px;display:none;justify-content:space-between;align-items:center;z-index:400;cursor:pointer}
+.cartbar small{font-size:11px;opacity:.9;display:block}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:2px 0 1px;border-top:1px solid #eee;z-index:400;height:32px}
+.bottom div{text-align:center;color:#888;cursor:pointer}.bottom div.active{color:#ea580c}.bottom b{font-size:9px;display:block}
+.menu-btn{width:38px;height:38px;background:#1D4ED8;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;flex-shrink:0;margin-top:8px}
+.top-icon{width:38px;height:38px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);text-decoration:none;color:#111}
+input,textarea,select{width:100%;padding:11px;border:1px solid #ddd;border-radius:8px;margin:6px 0}
+.save-addr-btn{background:#16a34a;color:#fff;border:none;width:100%;padding:12px;border-radius:10px;font-weight:bold;cursor:pointer;font-size:14px;margin-top:8px}
+.saved-addr{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:8px;font-size:13px;color:#166534;margin-top:6px;display:none}
+.save-success{background:#16a34a;color:#fff;border-radius:10px;padding:12px;margin-top:8px;text-align:center;font-weight:bold;font-size:14px;display:none}
+.menu-dropdown{display:none;position:absolute;top:62px;left:10px;background:#fff;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,.25);min-width:250px;overflow:hidden;z-index:1000}
+.menu-dropdown a{display:block;padding:14px 15px;text-decoration:none;color:#111;font-size:14px;border-bottom:1px solid #eee;cursor:pointer}
+.menu-dropdown a b{float:right;background:#ef4444;color:#fff;font-size:11px;padding:2px 7px;border-radius:20px}
+#loginScreen{position:fixed;inset:0;background:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200') center/cover no-repeat;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.login-box{background:#fff;width:100%;max-width:380px;border-radius:18px;padding:22px;text-align:center}
+.login-box h1{color:#FF0000;font-size:22px;line-height:1.2;font-weight:900}
+.login-btn{background:#ea580c;color:#fff;border:none;width:100%;padding:13px;border-radius:10px;font-weight:bold;font-size:16px;cursor:pointer;margin-top:8px}
+.tab{display:flex;gap:8px;margin-bottom:10px}.tab button{flex:1;padding:10px;border:none;border-radius:8px;cursor:pointer;font-weight:bold}.tab button.active{background:#111827;color:#fff}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2000;align-items:center;justify-content:center;padding:15px}
+#invoiceModal{z-index:3000}.modal-box{background:#fff;width:100%;max-width:460px;border-radius:16px;padding:20px;color:#111;max-height:90vh;overflow-y:auto}
+.modal-box.wide{max-width:650px}.close{float:right;cursor:pointer;font-size:20px}
+.green-btn{background:#22c55e;color:#fff;border:none;width:100%;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:8px}
+.blue-btn{background:#2563EB;color:#fff;border:none;width:100%;padding:10px;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:8px}
+.small-btn{background:#16a34a;color:#fff;border:none;padding:6px 10px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:12px}
+.inv-btn{background:#111827;color:#fff;border:none;padding:6px 10px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:12px}
+.pay-opt{border:2px solid #e5e7eb;border-radius:10px;padding:12px;margin:8px 0;cursor:pointer;display:flex;gap:10px;align-items:center}
+.pay-opt.sel{border-color:#22c55e;background:#f0fdf4}.pay-opt input{width:auto}
+.success-icon{font-size:60px;text-align:center}
+.owner-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:10px}.owner-card h4{margin-bottom:6px;color:#ea580c}.owner-card label{font-size:12px;color:#64748b}
+.otp-demo-box{background:#f0fdf4;border:2px dashed #22c55e;border-radius:10px;padding:12px;margin:8px 0;display:none;text-align:center}
+.footer{background:#000;padding:28px 14px;text-align:center}.footer h3{font-size:16px;color:#FF0000;font-weight:900}.footer p{font-size:13px;color:#fff;margin-top:8px;font-style:italic}.footer b{font-size:15px;color:#22c55e;letter-spacing:2px}.footer .footer-small{font-size:12px;color:#ccc;font-style:normal;margin-top:10px}
+.spinner{width:60px;height:60px;border:6px solid #e5e7eb;border-top:6px solid #22c55e;border-radius:50%;margin:15px auto;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.process-bar{height:8px;background:#e5e7eb;border-radius:20px;overflow:hidden;margin:12px 0}.process-fill{height:100%;width:0%;background:#22c55e;transition:width .3s}
+.notif-banner{background:#f0fdf4;border:2px solid #22c55e;border-radius:12px;padding:10px;margin:10px 14px;display:none;text-align:center;font-weight:bold;color:#166534}
+.invoice-box{border:2px dashed #111827;border-radius:12px;padding:14px;background:#fff}
+.canteen-row{background:#f8fafc;border:1px solid #eee;border-radius:10px;padding:10px;margin-bottom:8px;font-size:13px}
+.bill-summary{background:#fff7ed;border:2px solid #ea580c;border-radius:12px;padding:12px;margin-top:12px}.bill-summary .row{display:flex;justify-content:space-between;font-size:14px;padding:4px 0}.bill-summary .grand{border-top:2px dashed #ea580c;margin-top:6px;padding-top:8px;font-size:20px;font-weight:900}.bill-summary .grand span:last-child{color:#ea580c}
+.inv-total-box{background:#fff7ed;border:2px solid #ea580c;border-radius:10px;padding:10px;margin-top:10px}.inv-total-box .row{display:flex;justify-content:space-between;font-size:14px;padding:4px 0}.inv-total-box .grand{border-top:2px dashed #ea580c;margin-top:6px;padding-top:8px;font-size:18px;font-weight:900}.inv-total-box .grand span:last-child{color:#ea580c}
+</style>
+</head>
+<body>
+<div id="loginScreen"><div class="login-box">
+<h1>BWU RESTAURANT<br>& FOOD ORDERING</h1><p style="color:#16a34a;font-weight:bold" data-t="loginWelcome">College Canteen - Login to Order on Your Table</p>
+<div class="tab"><button id="tabLogin" class="active" onclick="switchTab('login')" data-t="login">Login</button><button id="tabSignup" onclick="switchTab('signup')" data-t="signup">Sign Up</button></div>
+<div id="loginForm"><input id="loginUserId" placeholder="User ID * - Example BW1234"><input id="loginPass" type="password" placeholder="Password *"><button class="login-btn" onclick="doLogin()" data-t="loginContinue">Login & Continue</button></div>
+<div id="signupForm" style="display:none"><input id="signName" placeholder="Your Full Name *"><input id="signMobile" placeholder="Mobile Number - 10 Digit *" type="tel"><button onclick="sendOTP('signup')" style="width:100%;padding:9px;background:#2563eb;color:#fff;border:0;border-radius:8px" data-t="sendOtp">Send OTP</button><div id="otpDemoBox" class="otp-demo-box"><b style="color:#16a34a;font-size:13px">DEMO OTP MESSAGE</b><p id="signupOTPShow" style="font-size:18px;font-weight:900;margin:6px 0">OTP: ----</p><p style="font-size:11px;color:#666">Demo Mode - No real SMS. Use this OTP to Verify.</p></div><input id="signOTP" placeholder="Enter 4-Digit OTP *" type="tel" maxlength="4" style="display:none"><input id="signPass" type="password" placeholder="Create Password *"><input id="signAddr" placeholder="College / Roll No."><button class="login-btn" onclick="doSignup()" data-t="verifyCreate">Verify OTP & Create Account</button></div>
+</div></div>
+
+<header><div class="header-row"><div class="menu-btn" onclick="toggleMenu()">⋮</div>
+<div class="heading-wrap"><h1 class="main-heading">BWU RESTAURANT<br>& FOOD ORDERING</h1><p style="font-size:11px;color:#16a34a;font-weight:bold;background:rgba(255,255,255,0.85);display:inline-block;padding:3px 10px;border-radius:20px;margin-top:6px"><span data-t="welcome">Welcome</span>, <b id="helloName">Guest</b> • <span id="helloMobile"></span></p></div>
+<div class="header-icons"><a class="top-icon" href="admin.php">🔐</a><div class="top-icon" onclick="openCanteenLogin()">🍽️</div></div></div>
+<div id="dropdown" class="menu-dropdown"><a onclick="openNotif()"><span data-t="notif">Notifications</span> <b id="notifDotMenu" style="display:none">0</b></a><a onclick="openMyOrders()"><span data-t="myOrders">My Orders</span></a><a onclick="openModal('ownerPassModal')"><span data-t="owner">Owner Details</span></a><a onclick="openModal('langModal')"><span data-t="lang">Language</span></a><a onclick="openModal('helpModal')"><span data-t="help">Help & Service</span></a><a onclick="doLogout()"><span data-t="logout">Logout</span></a></div>
+</header>
+
+<div id="notifBanner" class="notif-banner">🔔 <span id="notifBannerText"></span> <button class="small-btn" onclick="openNotif()" data-t="view">View</button></div>
+<div class="top"><div><h2 data-t="canteen">College Canteen</h2><p>Brainware College Canteen</p></div><div style="text-align:right"><span class="canteen-badge" id="openBadge">● OPEN NOW</span><p style="font-size:11px;color:#555;margin-top:3px" id="openTimeText">🕒 8:00 AM - 8:00 PM</p></div></div>
+<div class="search"><span>🔍</span><input id="searchInput" placeholder='Search food - biryani, momo, ice cream, biscuit, cake' onkeyup="doSearch()" onfocus="doSearch()"><span onclick="startVoiceSearch()" style="font-size:18px;cursor:pointer">🎤</span><span class="ai-icon" onclick="aiSearch()">🤖</span></div>
+<div id="searchResults" class="search-results"></div>
+<div class="order-type"><button id="btnTableOrder" class="active" onclick="setOrderType('table')" data-t="tableOrder">Table Order</button><button id="btnOnlineOrder" onclick="setOrderType('online')" data-t="onlineOrder">Online Order</button></div>
+
+<div class="table-box" id="tableBox">
+<h3><span data-t="selectTable">Select Your Table Number</span> * <span id="selTableTxt" style="color:#ea580c"></span></h3>
+<div class="tables" id="tables"></div>
+<div id="selTableShow" class="sel-table-show"><span data-t="yourTable">Your Table</span>: <span id="selTableBig"></span> <span data-t="selected">Selected</span></div>
+<div id="chairSelectorBox" class="chair-box">
+<b style="color:#ea580c" id="chairTitle">Select Chairs</b><br><span style="font-size:12px;color:#666">How many chairs do you want?</span><br><br>
+<div style="display:flex;gap:8px;justify-content:center" id="chairBtns"></div>
+<p id="chairMsg" style="font-size:13px;font-weight:bold;margin-top:8px;color:#166534">Please select chairs</p>
+</div>
+<p style="font-size:12px;color:#666;margin-top:8px" data-t="tapTable">Tap any Table - Orange + Tick = Your Table. Each Table has 4 Chairs.</p>
+</div>
+
+<div class="table-box" id="onlineBox" style="display:none">
+<h3 data-t="onlineTitle">Online Order - Delivery Details *</h3>
+<input id="onlineAddr" placeholder="Full Address / Hostel / Room No. *"><input id="onlinePhone" placeholder="Delivery Phone No. *">
+<div class="loc-box-small"><b data-t="location">Location</b><p id="locStatus" style="font-size:11px;color:#666;margin-top:2px" data-t="locTap">Tap below - KM will come automatically.</p><button type="button" class="loc-btn-small" id="locBtn" onclick="detectLocation(true)" data-t="useLoc">Use my current location</button><div class="km-show-small" id="kmShowBox">📍 <b id="kmShowBig">0 KM</b></div></div>
+<label style="font-size:13px;font-weight:bold"><span data-t="kmLabel">Delivery Distance (KM)</span> *</label>
+<input id="onlineKm" type="number" min="0.5" max="50" step="0.1" placeholder="KM will come after location track" oninput="updateDelCharge()">
+<button class="save-addr-btn" onclick="saveAddress()"><span data-t="saveAddr">Save Address</span></button>
+<div id="saveSuccessBox" class="save-success">✅ Save Address Successful!</div>
+<div id="savedAddrBox" class="saved-addr">✅ <span data-t="savedAddr">Saved Address</span>: <b id="savedAddrText"></b><br><span style="font-size:12px" id="savedKmText"></span> <span style="color:#2563eb;cursor:pointer" onclick="editAddress()">✏️ <span data-t="change">Change</span></span></div>
+<p style="font-size:12px;color:#666;margin-top:6px" data-t="onlineNote">Online Order - Delivered within 30 minutes.</p>
+</div>
+
+<div class="veg-nonveg"><button class="all active" onclick="setVegFilter('all',this)"><span data-t="allFood">All Food</span></button><button class="veg" onclick="setVegFilter('veg',this)"><span data-t="veg">Veg</span></button><button class="nonveg" onclick="setVegFilter('nonveg',this)"><span data-t="nonveg">Non-Veg</span></button></div>
+<div class="cats" id="cats">
+<div class="cat active" onclick="filterCat('All',this)"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200"><p data-t="catAll">All</p></div>
+<div class="cat" onclick="filterCat('Rice',this)"><img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=200"><p data-t="catRice">Rice</p></div>
+<div class="cat" onclick="filterCat('Paneer',this)"><img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=200"><p data-t="catPaneer">Paneer</p></div>
+<div class="cat" onclick="filterCat('Pizza',this)"><img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200"><p data-t="catPizza">Pizza</p></div>
+<div class="cat" onclick="filterCat('Momo',this)"><img src="https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=200"><p data-t="catMomo">Momo</p></div>
+<div class="cat" onclick="filterCat('Snacks',this)"><img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=200"><p data-t="catSnacks">Snacks</p></div>
+<div class="cat" onclick="filterCat('Biscuit',this)"><img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=200"><p data-t="catBiscuit">Biscuit</p></div>
+<div class="cat" onclick="filterCat('Cake',this)"><img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200"><p data-t="catCake">Cake</p></div>
+<div class="cat" onclick="filterCat('Sweets',this)"><img src="https://images.unsplash.com/photo-1587314168485-3236d6710814?w=200"><p data-t="catSweets">Sweets</p></div>
+<div class="cat" onclick="filterCat('IceCream',this)"><img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=200"><p data-t="catIce">Ice Cream</p></div>
+<div class="cat" onclick="filterCat('Drinks',this)"><img src="https://images.unsplash.com/photo-1554866585-cd94860890b7?w=200"><p data-t="catDrinks">Drinks</p></div>
+</div>
+<div class="filters"><button onclick="setFilter(this,'all')" class="active"><span data-t="filters">Filters</span></button><button onclick="setFilter(this,'under100')"><span data-t="under100">Under Rs.100</span></button><button onclick="setFilter(this,'veg')"><span data-t="pureVeg">Pure Veg</span></button><button onclick="setFilter(this,'fast')"><span data-t="ready10">Ready in 10 mins</span></button></div>
+<div class="sec"><h3 data-t="menuTitle">CANTEEN MENU - TODAY - 42 ITEMS</h3><div class="grid" id="menu"></div></div>
+<div class="footer"><h3>BWU RESTAURANT & FOOD ORDERING</h3><p data-t="footerQuote">Everyone knows Amrit, so I buy and eat it</p><p style="margin-top:10px"><b data-t="thankyou">THANK YOU</b></p><p class="footer-small">Brainware College Canteen • 8:00 AM - 8:00 PM • Phone: 9832209953</p></div>
+<div class="cartbar" id="cartBar" onclick="openViewBill()"><span id="cartCount">0 items<small>Grand Total: Rs.0</small></span><b><span data-t="viewBill">View Bill</span> ➡️</b></div>
+<div class="bottom"><div class="active"><b>MENU</b></div><div onclick="document.getElementById('tables').scrollIntoView()"><b>TABLES</b></div><div onclick="openModal('feedbackModal')"><b>FEEDBACK</b></div><div onclick="openUserDetails()"><b>PROFILE</b></div></div>
+
+<div id="billModal" class="modal"><div class="modal-box"><span class="close" onclick="closeModal('billModal')">✕</span><h3 data-t="billDetails">Bill Details</h3><p style="font-size:13px;margin:8px 0"><b><span data-t="orderType">Order Type</span>:</b> <span id="billOrderType"></span> • <b><span data-t="tableAddr">Table / Address</span>:</b> <span id="billTableShow"></span><span id="billKmWrap"> • <b><span data-t="distance">Distance</span>:</b> <span id="billKmShow"></span></span></p><table class="bill-table"><tr><th data-t="foodName">Food Name</th><th data-t="qty">Qty</th><th data-t="rate">Rate</th><th data-t="total">Total</th></tr><tbody id="billModalRows"></tbody></table><div class="bill-summary"><div class="row"><span data-t="itemTotal">Item Total:</span><span id="billSubTotal">Rs.0</span></div><div class="row" id="billDelRow"><span data-t="delCharge">Delivery Charge</span><span id="billDelCharge">Rs.0</span></div><div class="row"><span data-t="gst">GST Charge (5%)</span><span id="billGstCharge">Rs.0</span></div><div class="row grand"><span data-t="grandTotal">Grand Total Amount:</span><span id="billModalTotal">Rs.0</span></div></div><button class="green-btn" onclick="closeModal('billModal');openCheckout()">➡️ <span data-t="proceedPay">Proceed to Pay</span></button><button class="blue-btn" onclick="closeModal('billModal')"><span data-t="continueOrder">Continue Ordering</span></button></div></div>
+<div id="payModal" class="modal"><div class="modal-box"><span class="close" onclick="closeModal('payModal')">✕</span><h3 data-t="payment">Payment</h3><div id="payItems" style="font-size:13px;margin:10px 0"></div><p><b data-t="order">Order</b>: <span id="payTable"></span></p><div class="inv-total-box"><div class="row"><span data-t="itemTotal">Item Total:</span><span id="paySubTotal">Rs.0</span></div><div class="row" id="payDelRow"><span data-t="delCharge">Delivery Charge</span><span id="payDelCharge">Rs.0</span></div><div class="row"><span data-t="gst">GST Charge (5%)</span><span id="payGstCharge">Rs.0</span></div><div class="row grand"><span data-t="grandTotal">Grand Total Amount:</span><span id="payTotal" style="color:#ea580c">Rs.0</span></div></div><p style="font-size:13px;margin-top:10px" data-t="selectPay">Select Payment Method:</p><div class="pay-opt" onclick="selectPay(this)"><input type="radio" name="pay" value="Pay at Counter"> 💵 <div><b data-t="payCounter">Pay at Counter</b></div></div><div class="pay-opt sel" id="payUPIOption" onclick="selectPay(this)"><input type="radio" name="pay" value="UPI Payment" checked> 📱 <div><b data-t="payUpi">UPI Payment</b><br><small>9832209953@upi</small></div></div><div class="pay-opt" onclick="selectPay(this)"><input type="radio" name="pay" value="Card Payment"> 💳 <div><b data-t="payCard">Card Payment</b></div></div><div class="pay-opt" id="payCashOnTable" onclick="selectPay(this)"><input type="radio" name="pay" value="Cash on Table"> 🪑 <div><b data-t="payCashTable">Cash on Table</b><br><small>Pay cash at your table</small></div></div><div class="pay-opt" id="payCashOnDelivery" onclick="selectPay(this)"><input type="radio" name="pay" value="Cash on Delivery"> 🛵 <div><b data-t="payCod">Cash on Delivery</b></div></div><div id="cardBox" style="display:none;background:#f8fafc;border:1px solid #ddd;border-radius:10px;padding:10px;margin-top:8px"><input id="cardNum" placeholder="Card Number - 16 Digit" maxlength="16" type="tel"><input id="cardName" placeholder="Name on Card"><div style="display:flex;gap:8px"><input id="cardExp" placeholder="MM/YY"><input id="cardCvv" placeholder="CVV" maxlength="3" type="password"></div></div><button class="green-btn" onclick="doPayment()"><span data-t="payNow">Pay Now</span></button></div></div>
+<div id="processingModal" class="modal"><div class="modal-box" style="text-align:center"><div class="spinner"></div><h2 data-t="processing">Processing to Payment...</h2><p style="font-weight:bold;margin-top:8px"><span data-t="amount">Amount</span>: <span id="processingAmount" style="color:#ea580c">Rs.0</span> • <span id="processingMethod"></span></p><div class="process-bar"><div class="process-fill" id="processFill"></div></div><p id="processPercent" style="font-size:12px;color:#16a34a;font-weight:bold">0%</p></div></div>
+<div id="successModal" class="modal"><div class="modal-box" style="text-align:center"><div class="success-icon">✅</div><h2 style="color:#16a34a" data-t="orderSuccess2">Order Successfully!</h2><p id="successText" style="margin:12px 0;font-size:14px;line-height:1.6"></p><button class="blue-btn" onclick="openInvoiceFromSuccess()">📄 <span data-t="viewInvoice">View Bill Invoice</span></button><button class="green-btn" onclick="closeModal('successModal')"><span data-t="okContinue">OK - Continue Ordering</span></button></div></div>
+<div id="canteenPassModal" class="modal"><div class="modal-box"><span class="close" onclick="closeModal('canteenPassModal')">✕</span><h3>Canteen Orders - Login</h3><input id="canteenPassInput" type="password" placeholder="Canteen Password *"><button class="green-btn" onclick="checkCanteenPass()">Login & View Orders</button></div></div>
+<div id="canteenOrdersModal" class="modal"><div class="modal-box wide"><span class="close" onclick="closeModal('canteenOrdersModal')">✕</span><h3>Customer Order Details - Canteen</h3><p id="canteenCount"></p><div id="canteenOrderList"></div><button class="green-btn" onclick="closeModal('canteenOrdersModal')">Close</button></div></div>
+<div id="notifModal" class="modal"><div class="modal-box"><span class="close" onclick="closeModal('notifModal')">✕</span><h3 data-t="notif">Notifications</h3><div id="notifList"></div><button class="green-btn" onclick="markNotifRead()">Mark All Read</button></div></div>
+<div id="invoiceModal" class="modal"><div class="modal-box"><span class="close" onclick="closeModal('invoiceModal')">✕</span><div class="invoice-box" id="invoiceContent"></div><button class="blue-btn" onclick="window.print()">🖨️ Print / Save Invoice</button><button class="green-btn" onclick="closeModal('invoiceModal')">⬅️ Back</button></div></div>
+<div id="ownerPassModal" class="modal"><div class="modal-box"><span class="close" onclick="closeModal('ownerPassModal')">✕</span><h3>Owner Details - Password</h3><input id="ownerPassInput" type="password" placeholder="Owner Password *"><button class="green-btn" onclick="checkOwnerPass()">Unlock Owner Details</button></div></div>
+<div id="ownerEditModal" class="modal"><div class="modal-box"><span class="close" onclick="closeModal('ownerEditModal')">✕</span><h3 data-t="owner">Owner Details</h3><div id="ownerList"></div><button class="green-btn" onclick="saveOwners()">💾 Save All 4 Owners</button></div></div>
+<div id="userModal" class="modal"><div class="modal-box"><span class="close" onclick="closeModal('userModal')">✕</span><h3>User Details</h3><p><b>User ID:</b> <span id="dUserId"></span></p><p><b>Name:</b> <span id="dName"></span></p><p><b>Mobile:</b> <span id="dMobile"></span></p><p><b>Password:</b> <span id="dPass"></span> <button onclick="showPass()">Show</button></p><p><b>College / Roll:</b> <span id="dAddr"></span></p><p><b>Saved Address:</b> <span id="dSavedAddr"></span></p><p><b>Distance:</b> <span id="dSavedKm"></span></p><p><b>Joined:</b> <span id="dJoin"></span></p><button class="blue-btn" onclick="openMyOrders()">View My Orders</button><button class="green-btn" onclick="closeModal('userModal')">Close</button></div></div>
+<div id="myOrderModal" class="modal"><div class="modal-box wide"><span class="close" onclick="closeModal('myOrderModal')">✕</span><h3 data-t="myOrders">My Orders</h3><div id="myOrderList"></div><button class="green-btn" onclick="closeModal('myOrderModal')">Close</button></div></div>
+<div id="feedbackModal" class="modal"><div class="modal-box"><span class="close" onclick="closeModal('feedbackModal')">✕</span><h3>Feedback</h3><select id="fbStar"><option>⭐⭐⭐⭐⭐ - Excellent</option><option>⭐⭐⭐⭐ - Good</option><option>⭐⭐⭐ - Average</option><option>⭐⭐ - Bad</option><option>⭐ - Very Bad</option></select><textarea id="fbText" placeholder="How was canteen food?"></textarea><button class="green-btn" onclick="sendFeedback()">Send Feedback</button><div id="fbReplyBox" style="display:none;background:#f0fdf4;border:1px solid #22c55e;border-radius:10px;padding:12px;margin-top:12px"><b style="color:#16a34a">✅ Reply From Brainware Team:</b><p id="fbReplyText"></p></div></div></div>
+<div id="helpModal" class="modal"><div class="modal-box"><span class="close" onclick="closeModal('helpModal')">✕</span><h3 data-t="help">Help & Service</h3><p><b>Canteen Counter:</b> 9832209953</p><p><b>Time:</b> 8:00 AM - 8:00 PM, Mon - Sat</p><p><b>Delivery Charge:</b> Online Order 1 KM = Rs.5</p><p><b>GST Charge:</b> 5% on Item Total</p><button class="green-btn" onclick="closeModal('helpModal')">Close</button></div></div>
+<div id="langModal" class="modal"><div class="modal-box" style="text-align:center"><span class="close" onclick="closeModal('langModal')">✕</span><h3 data-t="selectLang">Select Language</h3><button class="green-btn" onclick="setLanguage('bn')">Bengali - বাংলা</button><button class="green-btn" onclick="setLanguage('hi')" style="background:#EA580C">Hindi - हिन्दी</button><button class="green-btn" onclick="setLanguage('en')" style="background:#2563EB">English</button><p id="langSavedMsg" style="display:none;color:#16a34a;font-weight:bold;margin-top:10px">Language Saved!</p></div></div>
+
+<script>
+const FALLBACK_IMG='https://b.zmtcdn.com/data/dish_photos/05b/8854c9fc1f32bd0c664206b1bebb205b.jpeg';
+function imgFallback(el){el.onerror=null;el.src=FALLBACK_IMG;}
+const CANTEEN_LAT=22.7231, CANTEEN_LNG=88.4825, GST_RATE=0.05, CANTEEN_PASS='canteen123', OWNER_PASS='owner123';
+let userLat=null,userLng=null;
+function calcDistanceKm(a,b,c,d){let R=6371,dl=(c-a)*Math.PI/180,dn=(d-b)*Math.PI/180;let x=Math.sin(dl/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dn/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
+function getKm(){let el=document.getElementById('onlineKm');if(!el||!el.value)return 0;let v=parseFloat(el.value);if(!v||v<0.5)return 0;return v;}
+function getDeliveryCharge(){if(orderType==='table')return 0;let km=getKm();if(!km)return 0;return Math.ceil(km*5);}
+function getGstCharge(s){return Math.round(s*GST_RATE);}
+const FULL_LANG={
+en:{welcome:"Welcome",canteen:"College Canteen",tableOrder:"Table Order",onlineOrder:"Online Order",selectTable:"Select Your Table Number",yourTable:"Your Table",selected:"Selected",tapTable:"Tap any Table - Orange + Tick = Your Table. Each Table has 4 Chairs.",onlineTitle:"Online Order - Delivery Details",location:"Location",locTap:"Tap below - KM will come automatically.",useLoc:"Use my current location",kmLabel:"Delivery Distance (KM)",saveAddr:"Save Address",savedAddr:"Saved Address",change:"Change",onlineNote:"Online Order - Delivered within 30 minutes.",allFood:"All Food",veg:"Veg",nonveg:"Non-Veg",catAll:"All",catRice:"Rice",catPaneer:"Paneer",catPizza:"Pizza",catMomo:"Momo",catSnacks:"Snacks",catBiscuit:"Biscuit",catCake:"Cake",catSweets:"Sweets",catIce:"Ice Cream",catDrinks:"Drinks",filters:"Filters",under100:"Under Rs.100",pureVeg:"Pure Veg",ready10:"Ready in 10 mins",menuTitle:"CANTEEN MENU - TODAY - 42 ITEMS",footerQuote:"Everyone knows Amrit, so I buy and eat it",thankyou:"THANK YOU",viewBill:"View Bill",billDetails:"Bill Details",orderType:"Order Type",tableAddr:"Table / Address",distance:"Distance",foodName:"Food Name",qty:"Qty",rate:"Rate",total:"Total",itemTotal:"Item Total:",delCharge:"Delivery Charge",gst:"GST Charge (5%)",grandTotal:"Grand Total Amount:",proceedPay:"Proceed to Pay",continueOrder:"Continue Ordering",payment:"Payment",order:"Order",selectPay:"Select Payment Method:",payCounter:"Pay at Counter",payUpi:"UPI Payment",payCard:"Card Payment",payCod:"Cash on Delivery",payCashTable:"Cash on Table",payNow:"Pay Now",processing:"Processing to Payment...",amount:"Amount",orderSuccess2:"Order Successfully!",viewInvoice:"View Bill Invoice",okContinue:"OK - Continue Ordering",myOrders:"My Orders",notif:"Notifications",owner:"Owner Details",lang:"Language",help:"Help & Service",logout:"Logout",view:"View",table:"Table",login:"Login",signup:"Sign Up",loginWelcome:"College Canteen - Login to Order on Your Table",loginContinue:"Login & Continue",sendOtp:"Send OTP",verifyCreate:"Verify OTP & Create Account",selectLang:"Select Language",booked:"BOOKED",minsLeft:"mins left",chair:"Chair",chairs:"Chairs",free:"Free",occupied:"Occupied",fullBooked:"FULL BOOKED"},
+bn:{welcome:"স্বাগতম",canteen:"কলেজ ক্যান্টিন",tableOrder:"টেবিল অর্ডার",onlineOrder:"অনলাইন অর্ডার",selectTable:"তোমার টেবিল নম্বর বাছো",yourTable:"তোমার টেবিল",selected:"সিলেক্টেড",tapTable:"যেকোনো টেবিলে ট্যাপ করো - কমলা + টিক = তোমার টেবিল। প্রত্যেক টেবিলে ৪টা চেয়ার।",onlineTitle:"অনলাইন অর্ডার - ডেলিভারি ডিটেইলস",location:"লোকেশন",locTap:"নিচে ট্যাপ করো - KM নিজে থেকে আসবে।",useLoc:"আমার বর্তমান লোকেশন ব্যবহার করো",kmLabel:"ডেলিভারি দূরত্ব (KM)",saveAddr:"ঠিকানা সেভ করো",savedAddr:"সেভ করা ঠিকানা",change:"বদলাও",onlineNote:"অনলাইন অর্ডার - ৩০ মিনিটের মধ্যে ডেলিভারি।",allFood:"সব খাবার",veg:"ভেজ",nonveg:"নন-ভেজ",catAll:"সব",catRice:"ভাত",catPaneer:"পনির",catPizza:"পিৎজা",catMomo:"মোমো",catSnacks:"স্ন্যাকস",catBiscuit:"বিস্কুট",catCake:"কেক",catSweets:"মিষ্টি",catIce:"আইসক্রিম",catDrinks:"ড্রিংকস",filters:"ফিল্টার",under100:"১০০ টাকার নিচে",pureVeg:"শুধু ভেজ",ready10:"১০ মিনিটে রেডি",menuTitle:"ক্যান্টিন মেনু - আজ - ৪২ টা আইটেম",footerQuote:"সবাই অমৃত চেনে, তাই কিনে খাই",thankyou:"ধন্যবাদ",viewBill:"বিল দেখো",billDetails:"বিল ডিটেইলস",orderType:"অর্ডার টাইপ",tableAddr:"টেবিল / ঠিকানা",distance:"দূরত্ব",foodName:"খাবারের নাম",qty:"পরিমাণ",rate:"দাম",total:"মোট",itemTotal:"আইটেম মোট:",delCharge:"ডেলিভারি চার্জ",gst:"GST চার্জ (5%)",grandTotal:"মোট টাকা:",proceedPay:"পেমেন্টে যাও",continueOrder:"আরও অর্ডার করো",payment:"পেমেন্ট",order:"অর্ডার",selectPay:"পেমেন্ট পদ্ধতি বাছো:",payCounter:"কাউন্টারে পেমেন্ট",payUpi:"UPI পেমেন্ট",payCard:"কার্ড পেমেন্ট",payCod:"ক্যাশ অন ডেলিভারি",payCashTable:"টেবিলে ক্যাশ",payNow:"এখনই পে করো",processing:"পেমেন্ট প্রসেস হচ্ছে...",amount:"টাকা",orderSuccess2:"অর্ডার সফল হয়েছে!",viewInvoice:"বিল ইনভয়েস দেখো",okContinue:"ঠিক আছে - আরও অর্ডার করো",myOrders:"আমার অর্ডার",notif:"নোটিফিকেশন",owner:"মালিকের ডিটেইলস",lang:"ভাষা",help:"সাহায্য ও সার্ভিস",logout:"লগআউট",view:"দেখো",table:"টেবিল",login:"লগইন",signup:"সাইন আপ",loginWelcome:"কলেজ ক্যান্টিন - টেবিলে অর্ডার করতে লগইন করো",loginContinue:"লগইন ও চালিয়ে যাও",sendOtp:"OTP পাঠাও",verifyCreate:"OTP যাচাই ও অ্যাকাউন্ট বানাও",selectLang:"ভাষা বাছো",booked:"বুকড",minsLeft:"মিনিট বাকি",chair:"চেয়ার",chairs:"চেয়ার",free:"খালি",occupied:"ভর্তি",fullBooked:"ফুল বুকড"},
+hi:{welcome:"स्वागत है",canteen:"कॉलेज कैंटीन",tableOrder:"टेबल ऑर्डर",onlineOrder:"ऑनलाइन ऑर्डर",selectTable:"अपनी टेबल नंबर चुनें",yourTable:"आपकी टेबल",selected:"सेलेक्टेड",tapTable:"किसी भी टेबल पर टैप करें - ऑरेंज + टिक = आपकी टेबल। हर टेबल में 4 कुर्सी।",onlineTitle:"ऑनलाइन ऑर्डर - डिलीवरी डिटेल्स",location:"लोकेशन",locTap:"नीचे टैप करें - KM अपने आप आ जाएगा।",useLoc:"मेरी करंट लोकेशन इस्तेमाल करें",kmLabel:"डिलीवरी दूरी (KM)",saveAddr:"एड्रेस सेव करें",savedAddr:"सेव्ड एड्रेस",change:"बदलें",onlineNote:"ऑनलाइन ऑर्डर - 30 मिनट में डिलीवरी।",allFood:"सब खाना",veg:"वेज",nonveg:"नॉन-वेज",catAll:"सब",catRice:"चावल",catPaneer:"पनीर",catPizza:"पिज़्ज़ा",catMomo:"मोमो",catSnacks:"स्नैक्स",catBiscuit:"बिस्कुट",catCake:"केक",catSweets:"मिठाई",catIce:"आइसक्रीम",catDrinks:"ड्रिंक्स",filters:"फिल्टर",under100:"Rs.100 से कम",pureVeg:"सिर्फ वेज",ready10:"10 मिनट में रेडी",menuTitle:"कैंटीन मेनू - आज - 42 आइटम",footerQuote:"सब अमृत जानते हैं, इसलिए खरीद कर खाते हैं",thankyou:"धन्यवाद",viewBill:"बिल देखें",billDetails:"बिल डिटेल्स",orderType:"ऑर्डर टाइप",tableAddr:"टेबल / एड्रेस",distance:"दूरी",foodName:"खाने का नाम",qty:"मात्रा",rate:"रेट",total:"टोटल",itemTotal:"आइटम टोटल:",delCharge:"डिलीवरी चार्ज",gst:"GST चार्ज (5%)",grandTotal:"कुल राशि:",proceedPay:"पेमेंट पर जाएं",continueOrder:"और ऑर्डर करें",payment:"पेमेंट",order:"ऑर्डर",selectPay:"पेमेंट तरीका चुनें:",payCounter:"काउंटर पर पेमेंट",payUpi:"UPI पेमेंट",payCard:"कार्ड पेमेंट",payCod:"कैश ऑन डिलीवरी",payCashTable:"टेबल पर कैश",payNow:"अभी पे करें",processing:"पेमेंट प्रोसेस हो रहा है...",amount:"राशि",orderSuccess2:"ऑर्डर सफल हो गया!",viewInvoice:"बिल इनवॉइस देखें",okContinue:"ठीक है - और ऑर्डर करें",myOrders:"मेरे ऑर्डर",notif:"नोटिफिकेशन",owner:"मालिक डिटेल्स",lang:"भाषा",help:"मदद और सर्विस",logout:"लॉगआउट",view:"देखें",table:"टेबल",login:"लॉगिन",signup:"साइन अप",loginWelcome:"कॉलेज कैंटीन - टेबल पर ऑर्डर करने के लिए लॉगिन करें",loginContinue:"लॉगिन और जारी रखें",sendOtp:"OTP भेजें",verifyCreate:"OTP वेरिफाई और अकाउंट बनाएं",selectLang:"भाषा चुनें",booked:"बुक्ड",minsLeft:"मिनट बाकी",chair:"कुर्सी",chairs:"कुर्सी",free:"खाली",occupied:"भरी",fullBooked:"फुल बुक्ड"}
+};
+function applyLanguage(){ let l=localStorage.getItem('bwu_lang')||'en'; let T=FULL_LANG[l]||FULL_LANG.en; document.querySelectorAll('[data-t]').forEach(el=>{let k=el.getAttribute('data-t'); if(T[k]) el.innerText=T[k];}); let si=document.getElementById('searchInput'); if(si) si.placeholder = l==='bn'?'খাবার খোঁজো - বিরিয়ানি, মোমো...' : l==='hi'?'खाना खोजें - बिरयानी, मोमो...' : 'Search food - biryani, momo, ice cream, biscuit, cake'; checkOpenClose(); }
+function setLanguage(l){ localStorage.setItem('bwu_lang',l); applyLanguage(); renderTables(); renderMenu(); let m=document.getElementById('langSavedMsg'); if(m) m.style.display='block'; setTimeout(()=>closeModal('langModal'),600); }
+let selectedChairs=0;
+function getTableBookings(){ let b=JSON.parse(localStorage.getItem('bwu_table_bookings')||'{}'); let now=Date.now(); for(let k in b){ if(b[k].until<now) delete b[k]; } localStorage.setItem('bwu_table_bookings',JSON.stringify(b)); return b; }
+function getChairsBooked(t){ let b=getTableBookings(); return b[t]?b[t].chairs:0; }
+function getMinsLeft(t){ let b=getTableBookings(); return b[t]?Math.ceil((b[t].until-Date.now())/60000):0; }
+function bookTableWithChairs(t,chairs){ let b=getTableBookings(); let already=b[t]?b[t].chairs:0; let total=Math.min(4,already+chairs); b[t]={chairs:total,until:Date.now()+(40*60*1000)}; localStorage.setItem('bwu_table_bookings',JSON.stringify(b)); renderTables(); }
+function selectChairs(n){ selectedChairs=n; renderTables(); }
+function updateDelCharge(){ let km=getKm(); let kb=document.getElementById('kmShowBox'); let kbig=document.getElementById('kmShowBig'); if(orderType==='online'&&kb&&kbig&&km>0){kb.style.display='block';kbig.innerText=km+' KM';} else if(kb){kb.style.display='none';} renderBill(); }
+function detectLocation(showAlert){
+  let st=document.getElementById('locStatus'),btn=document.getElementById('locBtn');
+  if(!navigator.geolocation){ if(st) st.innerText='Location not supported. Enter KM manually.'; return; }
+  if(location.protocol!=='https:'&&location.hostname!=='localhost'){ if(st) st.innerHTML='Please open site in <b>https://</b>'; return; }
+  if(btn){btn.disabled=true;btn.innerText='Locating...';} if(st) st.innerText='Tracking Location... Please Allow...';
+  navigator.geolocation.getCurrentPosition(function(pos){ userLat=pos.coords.latitude; userLng=pos.coords.longitude; let dist=calcDistanceKm(CANTEEN_LAT,CANTEEN_LNG,userLat,userLng); let roadKm=Math.max(1,Math.round(dist*1.3*10)/10); document.getElementById('onlineKm').value=roadKm; updateDelCharge(); if(st) st.innerHTML='Location Found! You are <b>'+roadKm+' KM</b> away.'; if(btn){btn.disabled=false;btn.innerText='Use my current location - Track Again';} localStorage.setItem(getAddrKey()+'_lat',userLat); localStorage.setItem(getAddrKey()+'_lng',userLng); localStorage.setItem(getAddrKey()+'_km',roadKm); if(showAlert) alert('Location Track Done! You are '+roadKm+' KM away.'); },function(err){ if(st) st.innerHTML='Location Blocked / GPS OFF. Enter KM manually.'; if(btn){btn.disabled=false;btn.innerText='Try Again';} },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+}
+function startVoiceSearch(){ if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){alert('Voice Search not supported.');return;} let Rec=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=new Rec(); let cur=localStorage.getItem('bwu_lang')||'en'; rec.lang=cur==='bn'?'bn-IN':cur==='hi'?'hi-IN':'en-IN'; rec.start(); rec.onresult=function(e){ document.getElementById('searchInput').value=e.results[0][0].transcript; doSearch(); }; rec.onerror=function(){alert('Voice not recognized.');}; }
+let menu=[
+{id:1,name:'Chicken Biryani',price:120,cat:'Rice',veg:false,img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400',rating:'4.5',offer:'20% OFF'},
+{id:2,name:'Veg Fried Rice',price:80,cat:'Rice',veg:true,img:'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400',rating:'4.2',offer:''},
+{id:3,name:'Paneer Butter Masala',price:110,cat:'Paneer',veg:true,img:'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400',rating:'4.6',offer:'BESTSELLER'},
+{id:4,name:'Chicken Pizza',price:150,cat:'Pizza',veg:false,img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400',rating:'4.4',offer:''},
+{id:5,name:'Veg Pizza',price:110,cat:'Pizza',veg:true,img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400',rating:'4.3',offer:''},
+{id:6,name:'Chicken Momo (6 pc)',price:80,cat:'Momo',veg:false,img:'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400',rating:'4.7',offer:'HOT'},
+{id:7,name:'Veg Momo (6 pc)',price:50,cat:'Momo',veg:true,img:'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400',rating:'4.5',offer:''},
+{id:8,name:'Chicken Burger',price:90,cat:'Snacks',veg:false,img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400',rating:'4.4',offer:''},
+{id:9,name:'French Fries',price:70,cat:'Snacks',veg:true,img:'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400',rating:'4.2',offer:''},
+{id:10,name:'Rasgulla (4 pc)',price:60,cat:'Sweets',veg:true,img:'https://images.unsplash.com/photo-1587314168485-3236d6710814?w=400',rating:'4.6',offer:''},
+{id:11,name:'Vanilla Ice Cream',price:50,cat:'IceCream',veg:true,img:'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400',rating:'4.5',offer:''},
+{id:12,name:'Cold Drink',price:30,cat:'Drinks',veg:true,img:'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400',rating:'4.1',offer:''},
+{id:13,name:'Marie Biscuit (Pack)',price:20,cat:'Biscuit',veg:true,img:'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400',rating:'4.3',offer:''},
+{id:14,name:'Bourbon Biscuit (Pack)',price:30,cat:'Biscuit',veg:true,img:'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400',rating:'4.5',offer:'BESTSELLER'},
+{id:15,name:'Good Day Biscuit (Pack)',price:35,cat:'Biscuit',veg:true,img:'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400',rating:'4.4',offer:''},
+{id:16,name:'Oreo Biscuit (Pack)',price:40,cat:'Biscuit',veg:true,img:'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400',rating:'4.7',offer:'HOT'},
+{id:17,name:'Dark Chocolate Cake',price:120,cat:'Cake',veg:true,img:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400',rating:'4.8',offer:'BESTSELLER'},
+{id:18,name:'Milk Chocolate Cake',price:110,cat:'Cake',veg:true,img:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400',rating:'4.6',offer:''},
+{id:19,name:'White Chocolate Cake',price:130,cat:'Cake',veg:true,img:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400',rating:'4.5',offer:''},
+{id:20,name:'Choco Truffle Cake',price:150,cat:'Cake',veg:true,img:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400',rating:'4.9',offer:'HOT'},
+{id:21,name:'Birthday Celebration Cake (Veg)',price:499,cat:'Cake',veg:true,img:'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=400',rating:'5.0',offer:'BIRTHDAY'},
+{id:22,name:'Birthday Celebration Cake (Egg)',price:549,cat:'Cake',veg:false,img:'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=400',rating:'4.9',offer:'BIRTHDAY'},
+{id:23,name:'Egg Fried Rice',price:90,cat:'Rice',veg:false,img:'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',rating:'4.4',offer:''},
+{id:24,name:'Chicken Fried Rice',price:110,cat:'Rice',veg:false,img:'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',rating:'4.5',offer:'HOT'},
+{id:25,name:'Veg Biryani',price:90,cat:'Rice',veg:true,img:'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=400',rating:'4.3',offer:''},
+{id:26,name:'Paneer Tikka',price:130,cat:'Paneer',veg:true,img:'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400',rating:'4.7',offer:'BESTSELLER'},
+{id:27,name:'Paneer Chilli',price:120,cat:'Paneer',veg:true,img:'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400',rating:'4.5',offer:''},
+{id:28,name:'Chicken Tikka',price:160,cat:'Snacks',veg:false,img:'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400',rating:'4.8',offer:'HOT'},
+{id:29,name:'Chicken Chilli',price:150,cat:'Snacks',veg:false,img:'https://b.zmtcdn.com/data/dish_photos/422/7b4dd566356e9564fff5abe6a2f18422.jpeg',rating:'4.6',offer:''},
+{id:30,name:'Veg Sandwich',price:50,cat:'Snacks',veg:true,img:'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400',rating:'4.2',offer:''},
+{id:31,name:'Chicken Sandwich',price:70,cat:'Snacks',veg:false,img:'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400',rating:'4.4',offer:''},
+{id:32,name:'Veg Chowmein',price:70,cat:'Snacks',veg:true,img:'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400',rating:'4.3',offer:''},
+{id:33,name:'Chicken Chowmein',price:90,cat:'Snacks',veg:false,img:'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400',rating:'4.5',offer:''},
+{id:34,name:'Aloo Paratha (2 pc)',price:60,cat:'Snacks',veg:true,img:'https://images.unsplash.com/photo-1626074353765-517a681e40be?w=400',rating:'4.4',offer:''},
+{id:35,name:'Egg Roll',price:60,cat:'Snacks',veg:false,img:'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400',rating:'4.5',offer:'HOT'},
+{id:36,name:'Chicken Roll',price:80,cat:'Snacks',veg:false,img:'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400',rating:'4.6',offer:''},
+{id:37,name:'Gulab Jamun (4 pc)',price:50,cat:'Sweets',veg:true,img:'https://images.unsplash.com/photo-1666190092159-3171cf0fbb12?w=400',rating:'4.7',offer:''},
+{id:38,name:'Chocolate Ice Cream',price:60,cat:'IceCream',veg:true,img:'https://images.unsplash.com/photo-1488900128323-21503983a07e?w=400',rating:'4.6',offer:''},
+{id:39,name:'Mango Juice',price:40,cat:'Drinks',veg:true,img:'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400',rating:'4.4',offer:''},
+{id:40,name:'Cold Coffee',price:60,cat:'Drinks',veg:true,img:'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400',rating:'4.5',offer:'HOT'},
+{id:41,name:'Tea (Kulhad)',price:15,cat:'Drinks',veg:true,img:'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400',rating:'4.6',offer:''},
+{id:42,name:'Egg Curry + Rice',price:100,cat:'Rice',veg:false,img:'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400',rating:'4.4',offer:''},
+];
+let cart=[],orderType='table',selTable='',vegFilter='all',catFilter='All',priceFilter='all',payMethod='UPI Payment',currentUser=null,otpCode='',isProcessing=false,lastOrder=null;
+let owners=JSON.parse(localStorage.getItem('bwu_owners')||'[{"name":"Owner 1","sid":"BW001","reg":"REG001"},{"name":"Owner 2","sid":"BW002","reg":"REG002"},{"name":"Owner 3","sid":"BW003","reg":"REG003"},{"name":"Owner 4","sid":"BW004","reg":"REG004"}]');
+function getGrandTotal(){let sub=cart.reduce((s,c)=>s+c.price*c.qty,0);let del=getDeliveryCharge();let gst=getGstCharge(sub);return{sub:sub,del:del,gst:gst,total:sub+del+gst,km:getKm()};}
+let catsPaused=false,catsTimer=null;
+function startCatsAutoScroll(){let box=document.getElementById('cats');if(!box||catsTimer)return;catsTimer=setInterval(function(){if(catsPaused)return;box.scrollLeft+=1;if(box.scrollLeft>=(box.scrollWidth-box.clientWidth-2)){setTimeout(function(){if(!catsPaused)box.scrollLeft=0;},800);}},30);}
+function checkOpenClose(){let now=new Date();let mins=now.getHours()*60+now.getMinutes();let badge=document.getElementById('openBadge');let tt=document.getElementById('openTimeText');if(!badge)return;let lang=localStorage.getItem('bwu_lang')||'en';if(mins>=480&&mins<1200){badge.innerText=lang==='bn'?'KHOLA ACHE':lang==='hi'?'KHULA HAI':'OPEN NOW';badge.classList.remove('closed');if(tt)tt.innerText='Open Now - Closes 8:00 PM';}else{badge.innerText=lang==='bn'?'BONDHO ACHE':lang==='hi'?'BAND HAI':'CLOSED NOW';badge.classList.add('closed');if(tt)tt.innerText=mins<480?'Opens at 8:00 AM Today':'Closed - Opens 8:00 AM Tomorrow';}}
+function switchTab(t){document.getElementById('tabLogin').classList.toggle('active',t==='login');document.getElementById('tabSignup').classList.toggle('active',t==='signup');document.getElementById('loginForm').style.display=t==='login'?'block':'none';document.getElementById('signupForm').style.display=t==='signup'?'block':'none';}
+function sendOTP(type){let mob=document.getElementById('signMobile').value.trim();if(mob.length!==10){alert('Please enter 10 digit Mobile!');return;}otpCode=String(Math.floor(1000+Math.random()*9000));document.getElementById('signOTP').style.display='block';document.getElementById('otpDemoBox').style.display='block';document.getElementById('signupOTPShow').innerText='OTP: '+otpCode;alert('DEMO OTP MESSAGE\nYour OTP is: '+otpCode);}
+function doSignup(){
+  let name=document.getElementById('signName').value.trim();let mob=document.getElementById('signMobile').value.trim();let otp=document.getElementById('signOTP').value.trim();let pass=document.getElementById('signPass').value.trim();let addr=document.getElementById('signAddr').value.trim();
+  if(!name||!mob||!pass){alert('Please fill Name, Mobile, Password!');return;}
+  if(otp!==otpCode){alert('Wrong OTP!');return;}
+  let users=JSON.parse(localStorage.getItem('bwu_users')||'[]');
+  let userId='BW'+Math.floor(1000+Math.random()*9000);
+  let user={userId:userId,name:name,mob:mob,pass:pass,addr:addr,join:new Date().toLocaleDateString()};
+  users.push(user);
+  localStorage.setItem('bwu_users',JSON.stringify(users));
+  localStorage.setItem('bwu_current',JSON.stringify(user));
+  fetch('api.php?action=users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(user)}).catch(()=>{});
+  alert('Account Created! Your User ID is: '+userId);
+  location.reload();
+}
+function doLogin(){let id=document.getElementById('loginUserId').value.trim();let pass=document.getElementById('loginPass').value.trim();if(!id||!pass){alert('Please enter User ID and Password!');return;}let users=JSON.parse(localStorage.getItem('bwu_users')||'[]');let u=users.find(x=>x.userId.toLowerCase()===id.toLowerCase()&&x.pass===pass);if(!u){alert('Wrong User ID / Password! Please Sign Up first.');return;}localStorage.setItem('bwu_current',JSON.stringify(u));location.reload();}
+function doLogout(){localStorage.removeItem('bwu_current');location.reload();}
+function checkLogin(){currentUser=JSON.parse(localStorage.getItem('bwu_current')||'null');if(currentUser){document.getElementById('loginScreen').style.display='none';document.getElementById('helloName').innerText=currentUser.name;document.getElementById('helloMobile').innerText=currentUser.mob;loadSavedAddress();}else{document.getElementById('loginScreen').style.display='flex';}updateNotifUI();}
+function toggleMenu(){let d=document.getElementById('dropdown');d.style.display=d.style.display==='block'?'none':'block';}
+document.addEventListener('click',function(e){if(!e.target.closest('.menu-btn')&&!e.target.closest('.menu-dropdown')){let d=document.getElementById('dropdown');if(d)d.style.display='none';}});
+function openModal(id){document.getElementById('dropdown').style.display='none';document.getElementById(id).style.display='flex';}
+function closeModal(id){if(id==='processingModal'&&isProcessing)return;document.getElementById(id).style.display='none';}
+function getAddrKey(){return currentUser?'bwu_addr_'+currentUser.userId:'bwu_addr_guest';}
+function loadSavedAddress(){let saved=localStorage.getItem(getAddrKey())||'';let phone=localStorage.getItem(getAddrKey()+'_phone')||'';let km=localStorage.getItem(getAddrKey()+'_km')||'';let lat=localStorage.getItem(getAddrKey()+'_lat')||'';let lng=localStorage.getItem(getAddrKey()+'_lng')||'';if(lat){userLat=parseFloat(lat);userLng=parseFloat(lng);}if(saved){document.getElementById('onlineAddr').value=saved;if(phone)document.getElementById('onlinePhone').value=phone;document.getElementById('onlineKm').value=km;document.getElementById('savedAddrBox').style.display='block';document.getElementById('savedAddrText').innerText=saved;document.getElementById('savedKmText').innerText='Auto KM: '+km+' KM';updateDelCharge();}}
+function saveAddress(){let a=document.getElementById('onlineAddr').value.trim();let p=document.getElementById('onlinePhone').value.trim();let km=getKm();if(!a){alert('Please enter Address first!');return;}if(!p){alert('Please enter Delivery Phone No.!');return;}localStorage.setItem(getAddrKey(),a);localStorage.setItem(getAddrKey()+'_phone',p);localStorage.setItem(getAddrKey()+'_km',km);if(userLat){localStorage.setItem(getAddrKey()+'_lat',userLat);localStorage.setItem(getAddrKey()+'_lng',userLng);}document.getElementById('savedAddrBox').style.display='block';document.getElementById('savedAddrText').innerText=a;document.getElementById('savedKmText').innerText='Auto KM: '+km+' KM';let suc=document.getElementById('saveSuccessBox');if(suc){suc.style.display='block';suc.innerText='Save Address Successful! Address: '+a+' | '+km+' KM';}alert('Save Address Successful!');renderBill();}
+function editAddress(){document.getElementById('saveSuccessBox').style.display='none';document.getElementById('onlineAddr').focus();}
+function openCanteenLogin(){document.getElementById('dropdown').style.display='none';openModal('canteenPassModal');}
+function checkCanteenPass(){let p=document.getElementById('canteenPassInput').value.trim();if(p===CANTEEN_PASS){closeModal('canteenPassModal');openCanteenOrders();}else alert('Wrong Password!');}
+function getAllOrders(){return JSON.parse(localStorage.getItem('bwu_canteen_orders')||localStorage.getItem('bwu_myorders')||'[]');}
+function openCanteenOrders(){let list=getAllOrders();document.getElementById('canteenCount').innerText='Total Orders: '+list.length+' | Pending: '+list.filter(o=>o.canteenStatus!=='Done').length;let el=document.getElementById('canteenOrderList');if(!list.length){el.innerHTML='No Orders Yet';}else{el.innerHTML=[...list].reverse().map((o,i)=>{let idx=list.length-1-i;let done=o.canteenStatus==='Done';let sub=o.subtotal!=null?o.subtotal:(o.total-(o.delivery||0)-(o.gst||0));let gst=o.gst!=null?o.gst:getGstCharge(sub);return `<div class="canteen-row"><b>#${idx+1} - ${o.name} (${o.userId||'Guest'})</b> <span style="float:right">${done?'Done':'Pending'}</span><br>Mobile: ${o.mob||'-'} | Chairs: ${o.chairs||'-'}<br>Items: ${o.items}<br><b>${o.orderType==='online'?'Online Order':'Table Order'}</b> | ${o.orderType==='online'?'Delivery: '+(o.addr||'-')+' | '+(o.km||1)+' KM | Grand Rs.'+o.total:'Table: '+(o.table||'-')+' | Grand Rs.'+o.total}<br>${o.pay} | ${new Date(o.date).toLocaleString()}<br>${done?'<b style="color:#16a34a">Order Done</b>':`<button class="small-btn" onclick="markOrderDone(${idx})">Mark Done</button>`}</div>`;}).join('');}openModal('canteenOrdersModal');}
+function markOrderDone(idx){let list=getAllOrders();if(!list[idx])return;list[idx].canteenStatus='Done';localStorage.setItem('bwu_canteen_orders',JSON.stringify(list));let my=JSON.parse(localStorage.getItem('bwu_myorders')||'[]');let m=my.find(x=>x.date===list[idx].date&&x.total===list[idx].total);if(m)m.canteenStatus='Done';localStorage.setItem('bwu_myorders',JSON.stringify(my));let uid=list[idx].userId||(currentUser?currentUser.userId:'');let notifs=JSON.parse(localStorage.getItem('bwu_notifications')||'[]');notifs.push({userId:uid,msg:'Ready to Your Order! Your order '+list[idx].items+' is ready.',date:new Date().toISOString(),read:false});localStorage.setItem('bwu_notifications',JSON.stringify(notifs));alert('Order Done! Notification sent to User ID: '+uid);openCanteenOrders();updateNotifUI();}
+function getMyNotifs(){if(!currentUser)return[];let all=JSON.parse(localStorage.getItem('bwu_notifications')||'[]');return all.filter(n=>!n.userId||n.userId===currentUser.userId);}
+function updateNotifUI(){let unread=getMyNotifs().filter(n=>!n.read).length;let dot=document.getElementById('notifDotMenu');if(dot){dot.style.display=unread?'inline-block':'none';dot.innerText=unread;}let banner=document.getElementById('notifBanner');let last=getMyNotifs().filter(n=>!n.read).slice(-1)[0];if(banner&&last){banner.style.display='block';document.getElementById('notifBannerText').innerText=last.msg;}else if(banner){banner.style.display='none';}}
+function openNotif(){document.getElementById('dropdown').style.display='none';let list=getMyNotifs();let el=document.getElementById('notifList');if(!currentUser){el.innerHTML='Please Login First';}else if(!list.length){el.innerHTML='No Notifications';}else{el.innerHTML=[...list].reverse().map(n=>`<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:10px;margin-bottom:8px"><b>${n.msg}</b><br><small>${new Date(n.date).toLocaleString()}</small></div>`).join('');}openModal('notifModal');}
+function markNotifRead(){let all=JSON.parse(localStorage.getItem('bwu_notifications')||'[]');all=all.map(n=>{if(!currentUser||!n.userId||n.userId===currentUser.userId)n.read=true;return n;});localStorage.setItem('bwu_notifications',JSON.stringify(all));updateNotifUI();closeModal('notifModal');}
+function buildInvoiceHTML(o){let del=o.orderType==='online'?(o.delivery||0):0;let sub=o.subtotal!=null?o.subtotal:(o.total-del-(o.gst||0));let gst=o.gst!=null?o.gst:getGstCharge(sub);let delRow=o.orderType==='online'?`<div class="row"><span>Delivery Charge (${o.km||1} KM x Rs.5):</span><span>Rs.${del}</span></div>`:'x';return `<div style="text-align:center"><h2 style="color:#FF0000">BWU RESTAURANT & FOOD ORDERING</h2><p style="font-size:12px;color:#666">Brainware College Canteen | Phone: 9832209953</p><hr style="margin:10px 0"></div><p><b>Invoice No:</b> BWU-${new Date(o.date).getTime().toString().slice(-6)}<br><b>Date:</b> ${new Date(o.date).toLocaleString()}<br><b>Customer:</b> ${o.name} (${o.userId||'Guest'})<br><b>Mobile:</b> ${o.mob||'-'}<br><b>Order Type:</b> ${o.orderType==='online'?'Online Order':'Table Order'}<br><b>${o.orderType==='online'?'Delivery Address':'Table'}:</b> ${o.orderType==='online'?o.addr:o.table} ${o.chairs?'( '+o.chairs+' Chairs )':''}<br>${o.orderType==='online'?'<b>Distance:</b> '+(o.km||1)+' KM<br>':''}<b>Payment:</b> ${o.pay}<br><b>Status:</b> ${o.canteenStatus||'Paid'}</p><table class="bill-table"><tr><th>Item</th><th>Total</th></tr><tr><td>${o.items}</td><td>Rs.${sub}</td></tr></table><div class="inv-total-box"><div class="row"><span>Item Total:</span><span>Rs.${sub}</span></div>${delRow}<div class="row"><span>GST Charge (5%):</span><span>Rs.${gst}</span></div><div class="row grand"><span>Grand Total Amount:</span><span>Rs.${o.total}</span></div></div><p style="text-align:center;margin-top:12px;font-style:italic;font-size:12px">Everyone knows Amrit, so I buy and eat it</p><p style="text-align:center"><b>THANK YOU</b></p>`;}
+function openInvoice(idx){let list=JSON.parse(localStorage.getItem('bwu_myorders')||'[]');let o=list[idx];if(!o)return;document.getElementById('invoiceContent').innerHTML=buildInvoiceHTML(o);document.getElementById('invoiceModal').style.display='flex';}
+function openInvoiceFromSuccess(){if(!lastOrder)return;document.getElementById('invoiceContent').innerHTML=buildInvoiceHTML(lastOrder);closeModal('successModal');document.getElementById('invoiceModal').style.display='flex';}
+function setOrderType(t){orderType=t;document.getElementById('btnTableOrder').classList.toggle('active',t==='table');document.getElementById('btnOnlineOrder').classList.toggle('active',t==='online');document.getElementById('tableBox').style.display=t==='table'?'block':'none';document.getElementById('onlineBox').style.display=t==='online'?'block':'none';updateDelCharge();renderBill();}
+function renderTables(){
+  let box=document.getElementById('tables'); if(!box) return;
+  let lang=localStorage.getItem('bwu_lang')||'en'; let T=FULL_LANG[lang]||FULL_LANG.en;
+  let h='';
+  for(let i=1;i<=10;i++){
+    let tt='Table '+i; let isSel=(selTable===tt); let bookedChairs=getChairsBooked(tt); let freeChairs=4-bookedChairs; let mins=getMinsLeft(tt);
+    if(bookedChairs>=4){
+      h+=`<button type="button" class="tbtn" disabled>🔒 ${T.table} ${i}<br><span>${T.fullBooked} • 4/4</span><br><span>${mins} ${T.minsLeft}</span></button>`;
+    } else if(bookedChairs>0){
+      let icons='🪑'.repeat(bookedChairs)+'⬜'.repeat(freeChairs);
+      h+=`<button type="button" class="tbtn${isSel?' sel':''}" onclick="selectTable('${tt}')" style="border:2px solid #f59e0b !important">${T.table} ${i}<br><span>${icons}</span><br><span>${bookedChairs}/4 ${T.occupied} • ${freeChairs} ${T.free} • ${mins}m</span></button>`;
+    } else {
+      h+=`<button type="button" class="tbtn${isSel?' sel':''}" onclick="selectTable('${tt}')">${T.table} ${i}<br><span>⬜⬜⬜⬜</span><br><span>4 ${T.chairs} • ${T.free}</span></button>`;
+    }
+  }
+  box.innerHTML=h;
+  let chairBox=document.getElementById('chairSelectorBox');
+  let show=document.getElementById('selTableShow'); let big=document.getElementById('selTableBig'); let txt=document.getElementById('selTableTxt');
+  if(selTable){
+    let already=getChairsBooked(selTable); let maxCan=4-already;
+    chairBox.style.display='block';
+    document.getElementById('chairTitle').innerText = selTable+' - '+already+'/4 Already Booked - Select Chairs';
+    document.getElementById('chairBtns').innerHTML=[1,2,3,4].map(n=>`<button class="chair-btn ${selectedChairs===n?'active':''}" ${n>maxCan?'disabled':''} onclick="selectChairs(${n})">🪑 ${n}</button>`).join('');
+    document.getElementById('chairMsg').innerText = selectedChairs>0 ? (selectedChairs+' '+T.chairs+' Selected - '+(selectedChairs===4?'Table will be FULL BOOKED':(4-already-selectedChairs)+' '+T.chairs+' will remain Free')) : 'Please select chairs';
+    if(show) show.style.display='block'; if(big) big.innerText=selTable+(selectedChairs?' • '+selectedChairs+' '+T.chairs:''); if(txt) txt.innerText='- '+selTable+' '+T.selected;
+  } else { chairBox.style.display='none'; if(show) show.style.display='none'; if(txt) txt.innerText=''; }
+}
+function selectTable(t){
+  if(getChairsBooked(t)>=4){ alert('🔒 '+t+' is FULL BOOKED! Please select another table.'); return; }
+  if(selTable===t){ selTable=''; } else { selTable=t; }
+  selectedChairs=0; localStorage.setItem('bwu_selTable',selTable); renderTables(); renderBill();
+}
+function setVegFilter(v,btn){vegFilter=v;document.querySelectorAll('.veg-nonveg button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMenu();}
+function filterCat(c,el){catFilter=c;document.querySelectorAll('.cat').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');renderMenu();}
+function setFilter(btn,type){document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');priceFilter=type;if(type==='veg')vegFilter='veg';else if(type==='all')vegFilter='all';renderMenu();}
+function doSearch(){let q=document.getElementById('searchInput').value.trim().toLowerCase();let box=document.getElementById('searchResults');if(!q){box.style.display='none';return;}let list=menu.filter(m=>m.name.toLowerCase().includes(q));if(!list.length){box.innerHTML='<div style="padding:10px;font-size:13px">No food found for "'+q+'"</div>';box.style.display='block';return;}box.innerHTML=list.map(m=>`<div class="search-item"><img src="${m.img}" onerror="imgFallback(this)"><div><b>${m.name}</b><br><small>Rs.${m.price} | ${m.cat}</small></div><button onclick="addToCart(${m.id});document.getElementById('searchResults').style.display='none'">ADD</button></div>`).join('');box.style.display='block';}
+function aiSearch(){let q=document.getElementById('searchInput').value.trim().toLowerCase();if(!q){alert('Type something - like Biryani, Momo');return;}let list=menu.filter(m=>m.name.toLowerCase().includes(q)||m.cat.toLowerCase().includes(q));if(!list.length){alert('No food found for "'+q+'"');return;}catFilter='All';vegFilter='all';renderMenu(list);document.getElementById('menu').scrollIntoView();}
+function renderMenu(list){
+  let show=list||menu; show=show.filter(m=>{ if(vegFilter==='veg'&&!m.veg)return false; if(vegFilter==='nonveg'&&m.veg)return false; if(catFilter!=='All'&&m.cat!==catFilter)return false; if(priceFilter==='under100'&&m.price>=100)return false; if(priceFilter==='fast'&&m.price>80)return false; return true; });
+  let box=document.getElementById('menu'); if(!show.length){box.innerHTML='<p style="grid-column:1/3;text-align:center;padding:20px">No food found</p>';return;}
+  box.innerHTML=show.map(m=>{
+    let inCart=cart.find(c=>c.id===m.id);
+    let qtyBtn=inCart?`<div class="qty-wrap"><button class="qty-btn qty-minus" onclick="changeQty(${m.id},-1)">-</button><b>${inCart.qty}</b><button class="qty-btn qty-plus" onclick="changeQty(${m.id},1)">+</button></div>`:`<button class="addbtn" onclick="addToCart(${m.id})">ADD +</button>`;
+    return `<div class="card">${m.offer?`<span class="offer">${m.offer}</span>`:''}<span class="veg-badge">${m.veg?'🟢 Veg':'🔴 Non-Veg'}</span><img src="${m.img}" onerror="imgFallback(this)"><div class="card-body"><b style="font-size:13px">${m.name}</b><br><span class="rating">★ ${m.rating}</span> <span style="font-size:11px;color:#666">${m.cat}</span><br><span class="price">Rs.${m.price}</span>${qtyBtn}</div></div>`;
+  }).join('');
+}
+function addToCart(id){let item=menu.find(m=>m.id===id);let f=cart.find(c=>c.id===id);if(f)f.qty++;else cart.push({...item,qty:1});renderBill();renderMenu();}
+function changeQty(id,delta){let f=cart.find(c=>c.id===id);if(!f)return;f.qty+=delta;if(f.qty<=0){cart=cart.filter(c=>c.id!==id);}renderBill();renderMenu();}
+function renderBill(){let g=getGrandTotal();let bar=document.getElementById('cartBar');if(cart.length===0){bar.style.display='none';return;}bar.style.display='flex';document.getElementById('cartCount').innerHTML=cart.reduce((s,c)=>s+c.qty,0)+' items <small>Grand Total: Rs.'+g.total+'</small>';}
+function openViewBill(){
+  if(cart.length===0){alert('Cart is empty!');return;}
+  let g=getGrandTotal();
+  document.getElementById('billOrderType').innerText=orderType==='table'?'Table Order':'Online Order';
+  document.getElementById('billTableShow').innerText=orderType==='table'?(selTable+(selectedChairs?' ('+selectedChairs+' Chairs)':'')||'Not Selected'):(document.getElementById('onlineAddr').value||'Not Saved');
+  document.getElementById('billKmShow').innerText=g.km+' KM';
+  document.getElementById('billKmWrap').style.display=orderType==='online'?'inline':'none';
+  document.getElementById('billModalRows').innerHTML=cart.map((c,i)=>`<tr><td>${c.name}</td><td><button class="qty-btn qty-minus" onclick="changeBillQty(${i},-1)">-</button> <b>${c.qty}</b> <button class="qty-btn qty-plus" onclick="changeBillQty(${i},1)">+</button> <span onclick="removeBillItem(${i})" style="color:red;cursor:pointer;margin-left:4px">🗑️</span></td><td>Rs.${c.price}</td><td>Rs.${c.price*c.qty}</td></tr>`).join('');
+  document.getElementById('billSubTotal').innerText='Rs.'+g.sub;
+  document.getElementById('billDelCharge').innerText='Rs.'+g.del;
+  document.getElementById('billGstCharge').innerText='Rs.'+g.gst;
+  document.getElementById('billModalTotal').innerText='Rs.'+g.total;
+  document.getElementById('billDelRow').style.display=orderType==='online'?'flex':'none';
+  openModal('billModal');
+}
+function changeBillQty(index,delta){cart[index].qty+=delta;if(cart[index].qty<=0){cart.splice(index,1);}renderBill();renderMenu();if(cart.length===0){closeModal('billModal');return;}openViewBill();document.getElementById('billModal').style.display='flex';}
+function removeBillItem(index){if(confirm('Remove this item?')){cart.splice(index,1);renderBill();renderMenu();if(cart.length===0){closeModal('billModal');return;}openViewBill();document.getElementById('billModal').style.display='flex';}}
+function openCheckout(){ if(orderType==='table'&&!selTable){alert('Please Select Table First!');return;} if(orderType==='table'&&selectedChairs===0){alert('Please select how many Chairs! Tap 1, 2, 3 or 4 chairs below the table.');return;} if(orderType==='online'&&!document.getElementById('onlineAddr').value){alert('Please Save Address First!');return;} let g=getGrandTotal(); document.getElementById('payItems').innerHTML=cart.map(c=>`${c.name} x ${c.qty} = Rs.${c.price*c.qty}`).join('<br>'); document.getElementById('payTable').innerText=orderType==='table'?selTable+' ('+selectedChairs+' Chairs)':document.getElementById('onlineAddr').value; document.getElementById('paySubTotal').innerText='Rs.'+g.sub; document.getElementById('payDelCharge').innerText='Rs.'+g.del; document.getElementById('payGstCharge').innerText='Rs.'+g.gst; document.getElementById('payTotal').innerText='Rs.'+g.total; document.getElementById('payDelRow').style.display=orderType==='online'?'flex':'none'; updatePayOptions(); openModal('payModal'); }
+function updatePayOptions(){
+  let tableOpt=document.getElementById('payCashOnTable');
+  let deliveryOpt=document.getElementById('payCashOnDelivery');
+  let upiOpt=document.getElementById('payUPIOption');
+  if(!tableOpt||!deliveryOpt) return;
+  if(orderType==='table'){
+    tableOpt.style.display='flex'; deliveryOpt.style.display='none';
+    if(payMethod==='Cash on Delivery'){ payMethod='UPI Payment'; document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('sel')); if(upiOpt) upiOpt.classList.add('sel'); }
+  } else {
+    tableOpt.style.display='none'; deliveryOpt.style.display='flex';
+    if(payMethod==='Cash on Table'){ payMethod='UPI Payment'; document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('sel')); if(upiOpt) upiOpt.classList.add('sel'); }
+  }
+}
+function selectPay(el){document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');payMethod=el.querySelector('input').value;document.getElementById('cardBox').style.display=payMethod==='Card Payment'?'block':'none';}
+function doPayment(){
+  if(isProcessing) return; if(orderType==='table'&&selectedChairs===0){alert('Please select Chairs first!');return;}
+  let tableToBook=selTable; let chairsToBook=selectedChairs;
+  isProcessing=true; let g=getGrandTotal(); closeModal('payModal');
+  document.getElementById('processingModal').style.display='flex'; document.getElementById('processingAmount').innerText='Rs.'+g.total; document.getElementById('processingMethod').innerText=payMethod;
+  let p=0; let iv=setInterval(()=>{
+    p+=20; document.getElementById('processFill').style.width=p+'%'; document.getElementById('processPercent').innerText=p+'%';
+    if(p>=100){ clearInterval(iv); isProcessing=false; closeModal('processingModal');
+      let order={name:currentUser?currentUser.name:'Guest',userId:currentUser?currentUser.userId:'Guest',mob:currentUser?currentUser.mob:'',items:cart.map(c=>c.name+' x '+c.qty).join(', '),orderType:orderType,table:tableToBook,chairs:orderType==='table'?chairsToBook:0,addr:document.getElementById('onlineAddr').value,km:g.km,subtotal:g.sub,delivery:g.del,gst:g.gst,total:g.total,pay:payMethod,date:new Date().toISOString(),canteenStatus:'Pending'};
+      lastOrder=order; let all=JSON.parse(localStorage.getItem('bwu_myorders')||'[]'); all.push(order); localStorage.setItem('bwu_myorders',JSON.stringify(all)); localStorage.setItem('bwu_canteen_orders',JSON.stringify(all));
+      fetch('api.php?action=orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(order)}).catch(()=>{});
+      let T=FULL_LANG[localStorage.getItem('bwu_lang')||'en']||FULL_LANG.en;
+      let chairMsg='';
+      if(orderType==='table'&&tableToBook){ bookTableWithChairs(tableToBook,chairsToBook); let totalAfter=getChairsBooked(tableToBook); if(totalAfter>=4) chairMsg=`<br><br><b style="color:#dc2626">🔒 ${tableToBook} ${T.fullBooked} - 4/4 ${T.chairs}</b><br><span style="font-size:12px">Booked for 40 Min</span>`; else chairMsg=`<br><br><b style="color:#ea580c">🪑 ${tableToBook} - ${chairsToBook} ${T.chairs} Booked</b><br><span style="font-size:12px">${totalAfter}/4 ${T.occupied} • ${4-totalAfter} ${T.chairs} Still ${T.free} • 40 Min</span>`; }
+      document.getElementById('successText').innerHTML=`Order Placed!<br><b>${order.items}</b><br>Grand Total: <b>Rs.${g.total}</b><br>${orderType==='table'?'Table: '+tableToBook+' ('+chairsToBook+' Chairs)':'Address: '+order.addr}`+chairMsg;
+      document.getElementById('successModal').style.display='flex'; cart=[]; renderBill(); renderMenu(); selTable=''; selectedChairs=0; setTimeout(renderTables,500);
+    }
+  },400);
+}
+function openMyOrders(){let list=JSON.parse(localStorage.getItem('bwu_myorders')||'[]');let el=document.getElementById('myOrderList');if(!list.length)el.innerHTML='No Orders Yet';else el.innerHTML=[...list].reverse().map((o,i)=>`<div class="canteen-row"><b>#${list.length-i} - ${o.items}</b><br>Total: Rs.${o.total} | ${o.pay} | Table: ${o.table||'-'} (${o.chairs||0} Chairs) | ${new Date(o.date).toLocaleString()}<br><button class="inv-btn" onclick="openInvoice(${list.length-1-i})">View Invoice</button></div>`).join('');openModal('myOrderModal');}
+function openUserDetails(){if(!currentUser){alert('Please Login');return;}document.getElementById('dUserId').innerText=currentUser.userId;document.getElementById('dName').innerText=currentUser.name;document.getElementById('dMobile').innerText=currentUser.mob;document.getElementById('dPass').innerText='****';document.getElementById('dAddr').innerText=currentUser.addr||'-';document.getElementById('dSavedAddr').innerText=localStorage.getItem(getAddrKey())||'-';document.getElementById('dSavedKm').innerText=localStorage.getItem(getAddrKey()+'_km')||'-';document.getElementById('dJoin').innerText=currentUser.join||'-';openModal('userModal');}
+function showPass(){document.getElementById('dPass').innerText=currentUser.pass;}
+function sendFeedback(){
+  let s=document.getElementById('fbStar').value; let t=document.getElementById('fbText').value;
+  fetch('api.php?action=feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:currentUser?currentUser.name:'Guest',star:s,text:t,date:new Date().toISOString()})}).catch(()=>{});
+  document.getElementById('fbReplyBox').style.display='block';document.getElementById('fbReplyText').innerText='Thank you for your feedback ('+s+')! We will improve our service.';
+}
+function checkOwnerPass(){if(document.getElementById('ownerPassInput').value===OWNER_PASS){closeModal('ownerPassModal');let el=document.getElementById('ownerList');el.innerHTML=owners.map((o,i)=>`<div class="owner-card"><h4>Owner ${i+1}</h4><label>Name</label><input id="oName${i}" value="${o.name}"><label>Student ID</label><input id="oSid${i}" value="${o.sid}"><label>Reg No</label><input id="oReg${i}" value="${o.reg}"></div>`).join('');openModal('ownerEditModal');}else alert('Wrong Password!');}
+function saveOwners(){owners=owners.map((o,i)=>({name:document.getElementById('oName'+i).value,sid:document.getElementById('oSid'+i).value,reg:document.getElementById('oReg'+i).value}));localStorage.setItem('bwu_owners',JSON.stringify(owners));alert('Owners Saved!');closeModal('ownerEditModal');}
+checkLogin(); applyLanguage(); renderTables(); renderMenu(); checkOpenClose(); setInterval(checkOpenClose,60000); startCatsAutoScroll(); setInterval(renderTables,30000);
+document.getElementById('cats').addEventListener('mouseenter',()=>catsPaused=true);
+document.getElementById('cats').addEventListener('mouseleave',()=>catsPaused=false);
+</script>
+</body>
+</html>
